@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 const char defaultLoc[] = "/etc/apache2";
 
@@ -69,10 +70,41 @@ int main() {
   }
   free(linkFiles);
 
+  printf("Please choose one of config by input the number. If the config is "
+         "enabled, then it will be disabled. If the config is disabled, then "
+         "it will be enabled! \n");
+
   for (int i = 0; i < count; i++) {
     struct FilteredFile file = filteredFiles[i];
     printf("%i. %s : %s \n", (i + 1), file.name,
            file.enabled ? "Enabled" : "Disabled");
+  }
+
+  int answer;
+  printf("Enter the number: ");
+  scanf("%i", &answer);
+  if (answer > count || answer <= 0) {
+    printf("The number you input is invalid! \n");
+    return 1;
+  }
+
+  struct FilteredFile choseFile = filteredFiles[answer - 1];
+  if (choseFile.enabled) {
+    unlink(choseFile.path);
+    printf("Unlink is success");
+  } else {
+    memset(temp, 0, sizeof(temp));
+    snprintf(temp, sizeof(temp), "%s/sites-available/%s", defaultLoc,
+             choseFile.name);
+    char temp2[128];
+    snprintf(temp2, sizeof(temp2), "%s/sites-enabled/%s", defaultLoc,
+             choseFile.name);
+    int err = symlink(temp, temp2);
+    if (err != 0) {
+      perror("Error when symlink: ");
+      return 1;
+    }
+    printf("Symlink is success! \n");
   }
 
   return 0;
