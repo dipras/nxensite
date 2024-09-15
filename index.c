@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-const char defaultLoc[] = "/etc/apache2";
+const char defaultLoc[] = "/etc/nginx";
 
 struct FilteredFile {
   char name[32];
