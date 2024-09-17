@@ -91,7 +91,7 @@ int main() {
   struct FilteredFile choseFile = filteredFiles[answer - 1];
   if (choseFile.enabled) {
     unlink(choseFile.path);
-    printf("Unlink is success");
+    printf("Your site have been disabled \n");
   } else {
     memset(temp, 0, sizeof(temp));
     snprintf(temp, sizeof(temp), "%s/sites-available/%s", defaultLoc,
@@ -104,7 +104,8 @@ int main() {
       perror("Error when symlink: ");
       return 1;
     }
-    printf("Symlink is success! \n");
+    printf("Symlink is success, your site is enabled. Restart your nginx "
+           "server! \n");
   }
 
   return 0;
